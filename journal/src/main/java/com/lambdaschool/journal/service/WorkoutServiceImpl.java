@@ -2,6 +2,7 @@ package com.lambdaschool.journal.service;
 
 import com.lambdaschool.journal.exceptions.ResourceFoundException;
 import com.lambdaschool.journal.exceptions.ResourceNotFoundException;
+import com.lambdaschool.journal.models.User;
 import com.lambdaschool.journal.models.Workout;
 import com.lambdaschool.journal.repository.UserRepository;
 import com.lambdaschool.journal.repository.WorkoutRepository;
@@ -22,15 +23,15 @@ public class WorkoutServiceImpl implements WorkoutService
     private UserRepository userrepos;
 
     @Override
-    public ArrayList<Workout> findAll(Pageable pageable)
+    public ArrayList<Workout> findAll()
     {
         ArrayList<Workout> list = new ArrayList<>();
-        workoutrepos.findAll(pageable).iterator().forEachRemaining(list::add);
+        workoutrepos.findAll().iterator().forEachRemaining(list::add);
         return list;
     }
 
     @Override
-    public Workout save(Workout workout)
+    public Workout save(Workout workout, User user)
     {
         Workout newWorkout = new Workout();
 
@@ -41,6 +42,7 @@ public class WorkoutServiceImpl implements WorkoutService
         newWorkout.setSets(workout.getSets());
         newWorkout.setReps(workout.getReps());
         newWorkout.setMuscleGroup(workout.getMuscleGroup());
+        newWorkout.setUser(user);
 
         return workoutrepos.save(newWorkout);
     }

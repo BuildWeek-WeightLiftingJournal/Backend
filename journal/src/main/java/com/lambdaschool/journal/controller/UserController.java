@@ -260,4 +260,13 @@ public class UserController
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @GetMapping(value = "/userworkout",
+                produces = {"application/json"})
+    public ResponseEntity<?> listAllWorkoutsForUser(Authentication authentication)
+    {
+        User user = userService.findByName(authentication.getName());
+
+        return new ResponseEntity<>(user.getWorkouts(), HttpStatus.OK);
+    }
 }

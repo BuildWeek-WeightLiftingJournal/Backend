@@ -115,6 +115,14 @@ public class Workout extends Auditable
         this.muscleGroup = muscleGroup;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "Workout{" + "workoutid=" + workoutid + ", title='" + title + '\'' + ", day='" + day + '\'' + ", exerciseName='" + exerciseName + '\'' + ", weight=" + weight + ", sets=" + sets + ", reps=" + reps + ", muscleGroup='" + muscleGroup + '\'' + '}';

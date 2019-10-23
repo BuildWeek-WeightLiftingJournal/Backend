@@ -1,6 +1,8 @@
 package com.lambdaschool.journal.controller;
 
+import com.lambdaschool.journal.models.User;
 import com.lambdaschool.journal.models.Workout;
+import com.lambdaschool.journal.service.UserService;
 import com.lambdaschool.journal.service.WorkoutService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,24 +21,19 @@ public class WorkoutController
     @Autowired
     private WorkoutService workoutService;
 
+    @Autowired
+    private UserService userService;
+
     @ApiOperation(value = "lists all workouts",
                   response = Workout.class,
                   responseContainer = "List")
-    @ApiImplicitParams({
-                               @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
-                                                 value = "Results page you want to retrieve (0..N)"),
-                               @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
-                                                 value = "Number of records per page."),
-                               @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
-                                                 value = "Sorting criteria in the format: property(,asc|desc). " +
-                                                         "Default sort order is ascending. " +
-                                                         "Multiple sort criteria are supported.")})
+
     //GET http://localhost:2019/workout/all
     @GetMapping(value = "/workout/all",
                 produces = {"application/json"})
-    public ResponseEntity<?> listAllWorkouts(@PageableDefault(page = 0, size = 10) Pageable pageable)
+    public ResponseEntity<?> listAllWorkouts()
     {
-        return new ResponseEntity<>(workoutService.findAll(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(workoutService.findAll(), HttpStatus.OK);
     }
 
 
@@ -57,9 +55,10 @@ public class WorkoutController
     @ApiOperation(value = "adds a new workout")
     @PostMapping(value = "/workout/new", consumes = {"application/json"})
     public ResponseEntity<?> addWorkout(@Valid
-                                           @RequestBody Workout workout)
+                                           @RequestBody Workout workout, Authentication authentication)
     {
-        workoutService.save(workout);
+        User user = userService.findByName(authentication.getName());
+        workoutService.save(workout, user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

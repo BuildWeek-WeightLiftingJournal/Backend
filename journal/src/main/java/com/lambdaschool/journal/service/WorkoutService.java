@@ -10,7 +10,7 @@ public interface WorkoutService
 {
     ArrayList<Workout> findAll();
 
-    Workout save(Workout workout, User user);
+    Workout save(Workout workout);
 
     Workout update(Workout workout, long id);
 

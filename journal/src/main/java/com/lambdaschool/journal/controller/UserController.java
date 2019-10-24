@@ -269,4 +269,10 @@ public class UserController
 
         return new ResponseEntity<>(user.getWorkouts(), HttpStatus.OK);
     }
+
+//    @GetMapping(value = "/mine", produces = {"application/json"})
+//    public ResponseEntity<?> getCurrentUserInfo(Authentication authentication) {
+//        User u = userService.findByName(authentication.getName());
+//        return new ResponseEntity<>(u, HttpStatus.OK);
+//    }
 }

@@ -8,10 +8,13 @@ import com.lambdaschool.journal.repository.UserRepository;
 import com.lambdaschool.journal.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service(value = "workoutService")
 public class WorkoutServiceImpl implements WorkoutService
@@ -31,8 +34,10 @@ public class WorkoutServiceImpl implements WorkoutService
     }
 
     @Override
-    public Workout save(Workout workout, User user)
+    public Workout save(Workout workout)
     {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userrepos.findByUsername(authentication.getName());
         Workout newWorkout = new Workout();
 
         newWorkout.setTitle(workout.getTitle());
@@ -42,7 +47,10 @@ public class WorkoutServiceImpl implements WorkoutService
         newWorkout.setSets(workout.getSets());
         newWorkout.setReps(workout.getReps());
         newWorkout.setMuscleGroup(workout.getMuscleGroup());
-        newWorkout.setUser(user);
+        List<Workout> currentUserWorkouts = currentUser.getWorkouts();
+        currentUserWorkouts.add(newWorkout);
+        currentUser.setWorkouts(currentUserWorkouts);
+        newWorkout.setUser(currentUser);
 
         return workoutrepos.save(newWorkout);
     }

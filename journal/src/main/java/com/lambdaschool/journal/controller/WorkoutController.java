@@ -8,12 +8,16 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @RestController
 public class WorkoutController
@@ -53,12 +57,17 @@ public class WorkoutController
 
     //POST http://localhost:2019/workout/new
     @ApiOperation(value = "adds a new workout")
-    @PostMapping(value = "/workout/new", consumes = {"application/json"})
+    @PostMapping(value = "/workout/new", consumes = {"application/json"}, produces = {"application/json"})
     public ResponseEntity<?> addWorkout(@Valid
-                                           @RequestBody Workout workout, Authentication authentication)
+                                           @RequestBody Workout workout) throws URISyntaxException
     {
-        User user = userService.findByName(authentication.getName());
-        workoutService.save(workout, user);
+        workoutService.save(workout);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        URI newWorkoutURI = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand(workout.getWorkoutid())
+                .toUri();
+        responseHeaders.setLocation(newWorkoutURI);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

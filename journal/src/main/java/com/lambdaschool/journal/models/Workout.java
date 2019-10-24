@@ -28,9 +28,10 @@ public class Workout extends Auditable
     private String muscleGroup;
 
     //ManyToOne
-    @ManyToOne
-    @JoinColumn(name = "userid")
-    @JsonIgnoreProperties("workouts")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userid",
+                nullable = false)
+    @JsonIgnoreProperties({"workouts", "hibernateLazyInitializer"})
     private User user;
 
     //default constructor
@@ -39,7 +40,7 @@ public class Workout extends Auditable
     }
 
     //constructor
-    public Workout(String title, String day, String exerciseName, int weight, int sets, int reps, String muscleGroup)
+    public Workout(String title, String day, String exerciseName, int weight, int sets, int reps, String muscleGroup,User user)
     {
         this.title = title;
         this.day = day;
@@ -48,6 +49,7 @@ public class Workout extends Auditable
         this.sets = sets;
         this.reps = reps;
         this.muscleGroup = muscleGroup;
+        this.user = user;
     }
 
     //getters and setters
@@ -125,7 +127,6 @@ public class Workout extends Auditable
 
     @Override
     public String toString() {
-        return "Workout{" + "workoutid=" + workoutid + ", title='" + title + '\'' + ", day='" + day + '\'' + ", exerciseName='" + exerciseName + '\'' + ", weight=" + weight + ", sets=" + sets + ", reps=" + reps + ", muscleGroup='" + muscleGroup + '\'' + '}';
+        return "Workout{" + "workoutid=" + workoutid + ", title='" + title + '\'' + ", day='" + day + '\'' + ", exerciseName='" + exerciseName + '\'' + ", weight=" + weight + ", sets=" + sets + ", reps=" + reps + ", muscleGroup='" + muscleGroup + '\'' + ", user=" + user + '}';
     }
-
 }
